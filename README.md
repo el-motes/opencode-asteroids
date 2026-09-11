@@ -44,4 +44,5 @@ Luego visita `http://localhost:3000`.
 - Asteroides se parten en fragmentos más pequeños al ser destruidos
 - Partículas de explosión al destruir asteroides
 - Power-up **Velocidad**: 12% de probabilidad al destruir un asteroide; al recogerlo, la nave se propulsa al doble durante 5 segundos (indicador en el HUD)
+- Power-up **Escudo**: cae junto con la Velocidad (50/50); al recogerlo, un campo cian rodea la nave durante 5 segundos y destruye cualquier asteroide o estrella fugaz que la toque, sin recibir daño
 - **Estrella Fugaz**: asteroide dorado que cruza la pantalla a gran velocidad; aparece cada 8–15 s, otorga 500 puntos al destruirla y se desvanece sola tras 7 s
