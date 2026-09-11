@@ -4,7 +4,7 @@ Clon del clásico arcade **Asteroids** implementado en canvas HTML5 puro, sin de
 
 ## Descripción
 
-Nave espacial en un campo de asteroides con envolvimiento de bordes (el espacio es toroidal). Destruye asteroides para sumar puntos: los grandes se parten en medianos, los medianos en pequeños. Los asteroides destruidos pueden soltar el power-up **Velocidad**, que duplica la propulsión de la nave durante 5 segundos.
+Nave espacial en un campo de asteroides con envolvimiento de bordes (el espacio es toroidal). Destruye asteroides para sumar puntos: los grandes se parten en medianos, los medianos en pequeños. Los asteroides destruidos pueden soltar los power-ups **Velocidad** (duplica la propulsión durante 5 segundos) o **Triple** (dispara tres balas en abanico estrecho durante 5 segundos).
 
 ## Tecnologías
 
@@ -43,6 +43,8 @@ Luego visita `http://localhost:3000`.
 - 3 vidas con invencibilidad temporal al reaparecer (parpadeo)
 - Asteroides se parten en fragmentos más pequeños al ser destruidos
 - Partículas de explosión al destruir asteroides
-- Power-up **Velocidad**: 12% de probabilidad al destruir un asteroide; al recogerlo, la nave se propulsa al doble durante 5 segundos (indicador en el HUD)
-- Power-up **Escudo**: cae junto con la Velocidad (50/50); al recogerlo, un campo cian rodea la nave durante 5 segundos y destruye cualquier asteroide o estrella fugaz que la toque, sin recibir daño
+- Power-ups: 12% de probabilidad al destruir un asteroide (tercios iguales); indicador de tiempo restante en el HUD
+  - **Velocidad** ('V', dorado): la nave se propulsa al doble durante 5 segundos
+  - **Escudo** ('E', cian): un campo cian rodea la nave durante 5 segundos y destruye cualquier asteroide o estrella fugaz que la toque, sin recibir daño
+  - **Triple** ('T', cian claro): cada disparo lanza tres balas en abanico estrecho durante 5 segundos
 - **Estrella Fugaz**: asteroide dorado que cruza la pantalla a gran velocidad; aparece cada 8–15 s, otorga 500 puntos al destruirla y se desvanece sola tras 7 s
