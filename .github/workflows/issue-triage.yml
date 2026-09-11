@@ -1,0 +1,40 @@
+name: triage-issue
+
+on:
+  issues:
+    types: [opened]
+
+jobs:
+  triage:
+    # Solo issues de humanos, no de bots
+    if: github.event.issue.user.type == 'User'
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+      issues: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+
+      - name: Triage del issue
+        uses: anomalyco/opencode/github@latest
+        env:
+          OPENCODE_API_KEY: ${{ secrets.OPENCODE_API_KEY }}
+        with:
+          model: opencode-go/glm-5.3
+          prompt: |
+            Se abrió un issue nuevo. Haz triage:
+            1. Lee el issue completo (título + cuerpo).
+            2. NUNCA modifiques el texto original — debe quedar tal cual, byte a byte.
+            3. Edita el body con gh: texto original arriba intacto, luego una línea
+               "---" y una sección "## 📋 Contexto adicional" con la información
+               relevante que elijas (enlaces a código en game.js/AGENTS.md/README,
+               checklist de reproducción si es bug, metadata que aplique).
+               Solo append, nada más.
+            4. Labels: asigna las existentes que apliquen (bug, enhancement,
+               question, documentation, ...) y si el contenido amerita una
+               etiqueta nueva, créala con `gh label create` y asígnala.
+            No publiques comentarios; solo edita body y labels.
