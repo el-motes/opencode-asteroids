@@ -29,14 +29,18 @@ Luego visita `http://localhost:3000`.
 | `←` `→`   | Rotar nave |
 | `↑`       | Propulsar  |
 | `Espacio` | Disparar   |
+| `S`       | Cambiar de nave (skin) |
 
 ## Puntuación
 
-| Asteroide | Puntos |
-| --------- | ------ |
-| Grande    | 20     |
-| Mediano   | 50     |
-| Pequeño   | 100    |
+| Asteroide     | Puntos |
+| ------------- | ------ |
+| Grande        | 20     |
+| Mediano       | 50     |
+| Pequeño       | 100    |
+| Estrella fugaz | 500   |
+
+Con la nave **Morada** todos los puntos se duplican (×2).
 
 ## Características
 
@@ -48,3 +52,5 @@ Luego visita `http://localhost:3000`.
   - **Escudo** ('E', cian): un campo cian rodea la nave durante 5 segundos y destruye cualquier asteroide o estrella fugaz que la toque, sin recibir daño
   - **Triple** ('T', cian claro): cada disparo lanza tres balas en abanico estrecho durante 5 segundos
 - **Estrella Fugaz**: asteroide dorado que cruza la pantalla a gran velocidad; aparece cada 8–15 s, otorga 500 puntos al destruirla y se desvanece sola tras 7 s
+- **Naves (skins)**: pulsa `S` para rotar entre Clásica, Dardo, Alas, Dorada y Morada (se guarda tu elección)
+  - **Morada**: nave morada el doble de grande que la original (también su área de colisión); a cambio, otorga el doble de puntos con ella
