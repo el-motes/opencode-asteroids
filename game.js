@@ -166,7 +166,8 @@ class ShootingStar extends Asteroid {
 }
 
 // ── Skins ─────────────────────────────────────────────────────────────────────
-// Cada skin define nombre, color de trazado, silueta (verts) y color de la llama.
+// Cada skin define nombre, color de trazado, silueta (verts) y color de la llama;
+// opcionalmente, escala de tamaño y multiplicador de puntos.
 const SKINS = [
   { nombre: 'CLÁSICA', color: '#fff',    llama: 'rgba(255, 130, 0, 0.85)',
     verts: [[20, 0], [-12, -9],  [-7, 0], [-12, 9]] },
@@ -176,9 +177,17 @@ const SKINS = [
     verts: [[16, 0], [-12, -14], [-5, 0], [-12, 14]] },
   { nombre: 'DORADA',  color: '#ffd24a', llama: 'rgba(255, 210, 74, 0.85)',
     verts: [[20, 0], [-13, -10], [-7, 0], [-13, 10]] },
+  { nombre: 'MORADA',  color: '#b06cff', llama: 'rgba(216, 140, 255, 0.85)',
+    verts: [[20, 0], [-12, -9],  [-7, 0], [-12, 9]],   // silueta de la nave original
+    escala: 2,    // el doble de grande que la nave original
+    puntos:  2 }, // el doble de puntos mientras se usa
 ];
 let skinIndex      = Math.min(Number(localStorage.getItem('asteroids-skin')) || 0, SKINS.length - 1);
 let skinLabelTimer = 0;   // segundos restantes del aviso de skin en el HUD
+
+// Escala de tamaño y multiplicador de puntos de la skin activa (1 por defecto)
+function skinEscala() { return SKINS[skinIndex].escala || 1; }
+function skinPuntos() { return SKINS[skinIndex].puntos  || 1; }
 
 function drawShipPath(verts, escala = 1) {
   ctx.beginPath();
@@ -201,13 +210,15 @@ const SHIELD_COLOR = '#4ad2ff';
 class Ship {
   constructor() { this.reset(); }
 
+  // Radio de colisión: sigue el tamaño de la skin activa (MORADA el doble)
+  get radius() { return 12 * skinEscala(); }
+
   reset() {
     this.x      = W / 2;
     this.y      = H / 2;
     this.angle  = -Math.PI / 2;
     this.vx     = 0;
     this.vy     = 0;
-    this.radius = 12;
     this.thrusting     = false;
     this.invincible    = 3;
     this.shootCooldown = 0;
@@ -248,7 +259,7 @@ class Ship {
   tryShoot() {
     if (this.shootCooldown > 0 || this.dead) return [];
     this.shootCooldown = 0.2;
-    const NOSE = 21;
+    const NOSE = 21 * skinEscala();   // la bala nace en la punta de la nave
     const ox = this.x + Math.cos(this.angle) * NOSE;
     const oy = this.y + Math.sin(this.angle) * NOSE;
     // Con Triple: abanico estrecho de 3 balas
@@ -263,6 +274,7 @@ class Ship {
     if (this.invincible > 0 && Math.floor(this.invincible * 8) % 2 === 0) return;
 
     const skin = SKINS[skinIndex];
+    const e    = skinEscala();
     ctx.save();
     ctx.translate(this.x, this.y);
     ctx.rotate(this.angle);
@@ -271,22 +283,22 @@ class Ship {
     ctx.lineJoin    = 'round';
 
     // Silueta de la skin activa
-    drawShipPath(skin.verts);
+    drawShipPath(skin.verts, e);
     ctx.stroke();
 
     // Llama del propulsor
     if (this.thrusting && Math.random() > 0.35) {
       ctx.beginPath();
-      ctx.moveTo(-8, -4);
-      ctx.lineTo(-8 - rand(6, 14), 0);
-      ctx.lineTo(-8,  4);
+      ctx.moveTo(-8 * e, -4 * e);
+      ctx.lineTo(-8 * e - rand(6, 14) * e, 0);
+      ctx.lineTo(-8 * e,  4 * e);
       ctx.strokeStyle = skin.llama;
       ctx.stroke();
     }
 
     // Escudo: círculo cian con leve pulso
     if (this.shieldTimer > 0) {
-      const r = 22 + Math.sin(Date.now() / 120) * 2;
+      const r = (22 + Math.sin(Date.now() / 120) * 2) * e;
       ctx.strokeStyle = SHIELD_COLOR;
       ctx.lineWidth = 2;
       ctx.beginPath();
@@ -429,7 +441,7 @@ function explode(x, y, count = 8) {
 
 function destroyAsteroid(a) {
   a.dead = true;
-  score += a instanceof ShootingStar ? 500 : POINTS[a.size];
+  score += (a instanceof ShootingStar ? 500 : POINTS[a.size]) * skinPuntos();
   explode(a.x, a.y, a.size * 5);
   return a.split();
 }
@@ -511,7 +523,7 @@ function update(dt) {
     const splits = [];
     for (const a of asteroids) {
       if (a.dead) continue;
-      const reach = ship.radius + a.radius * 0.82 + (ship.shieldTimer > 0 ? 14 : 0);
+      const reach = ship.radius + a.radius * 0.82 + (ship.shieldTimer > 0 ? 14 * skinEscala() : 0);
       if (dist(ship, a) >= reach) continue;
       if (ship.shieldTimer > 0) {
         splits.push(...destroyAsteroid(a));   // el escudo destruye el asteroide
@@ -566,6 +578,13 @@ function drawHUD() {
     drawLifeIcon(W - 16 - i * 22, 18);
 
   let y = 46;
+  // Multiplicador de puntos de la skin activa (p. ej. MORADA ×2)
+  if (skinPuntos() > 1) {
+    ctx.fillStyle = SKINS[skinIndex].color;
+    ctx.textAlign = 'left';
+    ctx.fillText(`PUNTOS ×${skinPuntos()}`, 14, y);
+    y += 20;
+  }
   if (state === 'playing' && ship.speedBoost > 0) {
     ctx.fillStyle = POWERUP_COLORS.V;
     ctx.textAlign = 'left';
